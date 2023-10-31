@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="png" href="COISAS DA MIH SZ/HTML/jogodaClara/neymar.png" type="image/neymar.png">
+    <title>Jogo da Velha UwU</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #3f3fea; 
+            margin: 4;
+            text-align: center;
+        }
+
+        h1 {
+            color: #f5ff3d; 
+        
+        }
+
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            gap: 5px;
+            margin: 20px auto;
+        }
+
+        .cell {
+            width: 80px;
+            height: 80px;
+            font-size: 40px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid #f4ff29; 
+            background-color: #73e74c; 
+            color: #136f1c; 
+        }
+
+        #status {
+            font-size: 18px;
+            margin-bottom: 10px;
+            text-align: center;
+            color: #040117; 
+        }
+
+        #reset-button {
+            padding: 8px 16px;
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #3b9912; 
+            color: #f7ff9b; 
+            border: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jogo da Velha</h1>
+    <p id="status">Vez do Jogador X</p>
+    <div id="board"></div>
+    <button id="reset-button">Reiniciar Jogo</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const board = document.getElementById('board');
+            const status = document.getElementById('status');
+            const resetButton = document.getElementById('reset-button');
+
+            let currentPlayer = 'X';
+            let gameBoard = ['', '', '', '', '', '', '', '', ''];
+            let gameActive = true;
+
+        
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                cell.addEventListener('click', () => cellClickHandler(i));
+                board.appendChild(cell);
+            }
+
+            function cellClickHandler(index) {
+                if (!gameActive || gameBoard[index] !== '') return;
+
+                gameBoard[index] = currentPlayer;
+                updateBoard();
+                checkWinner();
+
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                status.textContent = `Vez do Jogador ${currentPlayer}`;
+            }
+
+            // Atualizar a representação visual do tabuleiro
+            function updateBoard() {
+                const cells = document.querySelectorAll('.cell');
+                cells.forEach((cell, index) => {
+                    cell.textContent = gameBoard[index];
+                });
+            }
+
+            // Verificar se há um vencedor ou empate
+            function checkWinner() {
+                const winningCombos = [
+                    [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                    [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                    [0, 4, 8], [2, 4, 6]
+                ];
+
+                for (const combo of winningCombos) {
+                    const [a, b, c] = combo;
+                    if (gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c]) {
+                        gameActive = false;
+                        status.textContent = `Jogador ${currentPlayer} venceu!`;
+                        return;
+                    }
+                }
+
+                if (!gameBoard.includes('')) {
+                    gameActive = false;
+                    status.textContent = 'Empate! O jogo acabou.';
+                }
+            }
+
+            // Reiniciar o jogo
+            resetButton.addEventListener('click', () => {
+                currentPlayer = 'X';
+                gameBoard = ['', '', '', '', '', '', '', '', ''];
+                gameActive = true;
+                status.textContent = 'Vez do Jogador X';
+                updateBoard();
+            });
+        });
+    </script>
+</body>
+</html>
